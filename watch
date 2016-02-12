@@ -1,0 +1,18 @@
+#!/usr/bin/env tclsh
+
+set time [lindex $argv 0]
+set script [lrange $argv 1 end]
+
+#puts "Time: $time"
+#puts "Script: $script"
+
+proc run {} {
+    upvar script script
+    upvar time time
+    puts -nonewline "\x1b\[0;0f" ;# VT100 escape sequence
+    puts "[exec -ignorestderr {*}$script]"
+    puts -nonewline "\x1b\[J"
+    after [expr $time * 1000] run
+}
+run
+vwait forever
