@@ -1,4 +1,8 @@
 #!/usr/bin/env tclsh
+if {[llength $argv] < 2} {
+    puts "Usage: watch <interval-seconds> <commands>"
+    exit 1
+}
 
 set time [lindex $argv 0]
 set script [lrange $argv 1 end]
@@ -9,9 +13,10 @@ set script [lrange $argv 1 end]
 proc run {} {
     upvar script script
     upvar time time
-    puts -nonewline "\x1b\[0;0f" ;# VT100 escape sequence
+    #puts "[exec tput cup 0 0]" ;# Alternative way to output the VT100 sequence [1;1H
+    puts -nonewline "\x1b\[f" ;# VT100 escape sequence to position at top-left
     puts "[exec -ignorestderr {*}$script]"
-    puts -nonewline "\x1b\[J"
+    puts -nonewline "\x1b\[J" ;# VT100 clear screen from cursor down
     after [expr $time * 1000] run
 }
 run
